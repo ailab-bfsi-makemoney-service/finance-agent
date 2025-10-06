@@ -3,10 +3,7 @@ uvicorn==0.37.0
 requests==2.32.5
 pydantic==2.11.9
 langchain==0.3.27
-langchain-core==0.3.76
 langchain-openai==0.3.33
-langchain-community==0.3.14
-langsmith==0.4.31
 sentence-transformers==3.1.1
 faiss-cpu==1.12.0
 openai==1.109.1
