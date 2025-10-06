@@ -2,11 +2,17 @@ fastapi==0.117.1
 uvicorn==0.37.0
 requests==2.32.3
 pydantic==2.11.0
+
+# LangChain ecosystem (aligned versions)
 langchain==0.3.7
 langchain-openai==0.3.3
 langchain-community==0.3.7
+
+# Embeddings + Vector store
 sentence-transformers==3.1.1
-faiss-cpu==1.8.0
+faiss-cpu==1.12.0
+
+# Core utilities
 openai==1.46.0
 numpy==2.0.2
 SQLAlchemy==2.0.31
