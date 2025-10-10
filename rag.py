@@ -7,7 +7,7 @@ from langchain.docstore.document import Document
 class RAGEngine:
     def __init__(self):
         # Use local Hugging Face embeddings instead of OpenAI
-        self.embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+        self.embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/paraphrase-MiniLM-L3-v2")
         self.vectorstore = None
         self._build_index()
 
