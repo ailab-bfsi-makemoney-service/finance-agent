@@ -1,0 +1,21 @@
+Intent Category,Test Question 1,Test Question 2,Expected Behavior / Validation Notes
+Overall Spend,How much did I spend overall in January 2025?,What’s my total spending so far in FY25 to date?,Aggregates all transactions (amount < 0) for the period.
+Category Spend,How much did I spend on travel in March 2025?,Grocery spend in May 2025?,Filters transactions by category keyword and aggregates spend.
+Restaurant Spend,How much did I spend at restaurants in April 2025?,Dining out total for July 2025?,Aggregates Food & Drink category transactions.
+Top Merchants / Restaurants,Top restaurants by spend for June 2025.,Which merchants did I spend the most at this quarter?,Lists Top 5 merchants by total spend with chart output.
+Monthly Summary,Summarize my spending for February 2025.,Breakdown for September 2025.,Displays monthly total and category distribution.
+Compare Months,Compare my spending in January and February 2025.,Did I spend more in August or September 2025?,Compares two month totals with bar chart difference.
+Recurring Merchants / Subscriptions,Which recurring payments do I have in FY25?,List subscriptions between May and July 2025.,Detects merchants with ≥2 transactions.
+Large Purchases,Show purchases above $500 in FY25.,What were my largest transactions in May 2025?,Filters by amount ≥ threshold and sorts descending.
+Fees & Adjustments,Any bank fees charged in April 2025?,Service charges for FY25 to date.,Filters category = Fees & Adjustments.
+Entertainment Spend,How much did I spend on entertainment in February 2025?,Streaming and movies total for FY25.,Filters Entertainment category.
+Groceries / Supermarkets,Grocery store spend in March 2025.,Supermarket spending for August 2025.,Aggregates Groceries category.
+Travel / Transport,Travel expenses in June 2025.,Flights and hotels during FY25 summer.,Filters Travel category.
+Bills & Utilities,How much did I spend on utilities in May 2025?,Electric and water bills for October 2025.,Aggregates Bills & Utilities category.
+Health & Wellness,Health and pharmacy spending FY25.,Gym or wellness costs in July 2025.,Filters Health & Wellness category.
+Fallback / Miscellaneous,What’s my average transaction amount FY25?,Which category do I spend the least in FY25?,Uses RAG fallback semantic reasoning.
+Restaurant Type: Cuisine Spend,How much did I spend at Italian restaurants in May 2025?,Total spend at Indian restaurants this quarter.,"Filters transactions with restaurantType field (Italian, Indian, etc.)."
+Restaurant Type: Top by Cuisine,Top Italian restaurants by spend this year.,Which Japanese restaurants did I visit most often in FY25?,Lists Top restaurants by cuisine type with spend total.
+Restaurant Type: Compare Cuisines,Compare my spend between Italian and Indian restaurants in FY25.,Did I spend more at Mexican or Chinese restaurants this summer?,Compares total spend between two cuisine types.
+Restaurant Type: Visit Frequency,How many times did I eat at sushi restaurants in June 2025?,Number of visits to coffee shops in September 2025.,Counts transactions by cuisine-enriched merchant.
+Restaurant Type: Trend Analysis,Trend of restaurant spending by cuisine over FY25.,Show my monthly spend at Indian restaurants from Jan to Oct 2025.,Charts monthly spend by cuisine type.

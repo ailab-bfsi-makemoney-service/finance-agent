@@ -1,0 +1,4 @@
+SPRING_DATASOURCE_URL=jdbc:postgresql://ep-autumn-salad-af2dfoue-pooler.c-2.us-west-2.aws.neon.tech/neondb?user=bian_app&password=agentic_ai_prototype&sslmode=require&options=-c%20search_path%3Dbian,public
+SPRING_DATASOURCE_USERNAME=bian_app
+SPRING_DATASOURCE_PASSWORD=agentic_ai_prototype
+SPRING_JPA_HIBERNATE_DDL_AUTO=validate

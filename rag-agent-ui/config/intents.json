@@ -1,0 +1,99 @@
+{
+  "intents": [
+    {
+      "id": "overall_spend",
+      "handler": "intents.overall_spend.handle",
+      "keywords": [
+        "overall spend",
+        "total spend",
+        "all spending",
+        "how much did i spend"
+      ],
+      "priority": 5
+    },
+    {
+      "id": "category_spend",
+      "handler": "intents.category_spend.handle",
+      "keywords": [
+        "spend on",
+        "spent on",
+        "groceries",
+        "shopping",
+        "gas",
+        "entertainment",
+        "utilities"
+      ],
+      "priority": 9
+    },
+    {
+      "id": "restaurant_spend",
+      "handler": "intents.restaurant_spend.handle",
+      "keywords": [
+        "restaurant",
+        "restaurants",
+        "dining",
+        "food",
+        "eat",
+        "cafe",
+        "bar"
+      ],
+      "priority": 20
+    },
+    {
+      "id": "top_restaurants",
+      "handler": "intents.top_merchants.handle",
+      "keywords": [
+        "top restaurants",
+        "favorite restaurants",
+        "which restaurants"
+      ],
+      "priority": 8
+    },
+    {
+      "id": "monthly_summary",
+      "handler": "intents.monthly_summary.handle",
+      "keywords": [
+        "summary for",
+        "recap for",
+        "how did i do in"
+      ],
+      "priority": 7
+    },
+    {
+      "id": "compare_months",
+      "handler": "intents.compare_months.handle",
+      "keywords": [
+        "compare",
+        "vs",
+        "versus"
+      ],
+      "priority": 6
+    },
+    {
+      "id": "recurring_merchants",
+      "handler": "intents.recurring_merchants.handle",
+      "keywords": [
+        "recurring",
+        "subscription",
+        "every month"
+      ],
+      "priority": 5
+    },
+    {
+      "id": "large_purchases",
+      "handler": "intents.large_purchases.handle",
+      "keywords": [
+        "large purchases",
+        "big purchases",
+        "above"
+      ],
+      "priority": 5
+    },
+    {
+      "id": "fallback",
+      "handler": "intents.fallback.handle",
+      "keywords": [],
+      "priority": 0
+    }
+  ]
+}
