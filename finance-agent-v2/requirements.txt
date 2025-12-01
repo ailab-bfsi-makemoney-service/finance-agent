@@ -1,0 +1,18 @@
+# --- Core framework ---
+fastapi
+uvicorn
+requests
+pydantic
+python-dotenv
+
+# --- Agent / LLM integration ---
+openai
+langchain==0.3.7
+langchain-openai==0.3.3
+langchain-community==0.3.7
+
+# --- RAG components ---
+faiss-cpu==1.12.0
+sentence-transformers==3.1.1
+numpy
+

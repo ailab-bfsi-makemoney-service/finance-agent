@@ -1,0 +1,29 @@
+# Virtual environments and caches
+venv/
+__pycache__/
+*.pyc
+
+# Environment and secrets
+.env
+*.env
+
+# IDE and system files
+.vscode/
+.idea/
+.DS_Store
+
+# Build and archives
+*.zip
+*.tar
+*.log
+
+# Local run scripts
+*.sh
+
+# FAISS indexes and test data
+rag/index/*
+!rag/index/.keep
+transactions_debug.json
+
+# Git internals
+.git/

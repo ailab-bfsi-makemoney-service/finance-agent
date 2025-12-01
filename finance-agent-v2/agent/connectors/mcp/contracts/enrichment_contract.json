@@ -1,0 +1,12 @@
+{
+  "intent": "run_enrichment",
+  "description": "Trigger merchant enrichment process",
+  "payload": {
+    "mode": "manual",
+    "scope": "Food & Drink"
+  },
+  "response": {
+    "status": "success",
+    "enriched_merchants": 42
+  }
+}

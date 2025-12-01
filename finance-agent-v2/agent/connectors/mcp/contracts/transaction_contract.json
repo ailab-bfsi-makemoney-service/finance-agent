@@ -1,0 +1,20 @@
+{
+  "intent": "get_transactions",
+  "description": "Retrieve filtered transaction data",
+  "payload": {
+    "filters": {
+      "category": "Food & Drink",
+      "date_range": "2025-09-01:2025-09-30"
+    }
+  },
+  "response": {
+    "transactions": [
+      {
+        "id": 101,
+        "description": "Chipotle",
+        "amount": -18.75,
+        "merchant_type": "Mexican Restaurant"
+      }
+    ]
+  }
+}
