@@ -21,9 +21,16 @@ __pycache__/
 *.sh
 
 # FAISS indexes and test data
-rag/index/*
 !rag/index/.keep
 transactions_debug.json
 
 # Git internals
 .git/
+# ignore everything in the index by default
+rag/index/*
+
+# but commit required RAG index artifacts
+!rag/index/faiss.index
+!rag/index/finance_agent.index
+!rag/index/metadata.json
+!rag/index/finance_agent_meta.json
