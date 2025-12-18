@@ -16,6 +16,13 @@ class RAGRetriever:
         base_dir = os.path.dirname(os.path.abspath(__file__))
         self.index_path = os.path.join(base_dir, "faiss.index")
         self.meta_path = os.path.join(base_dir, "metadata.json")
+        # Render/Git layout: metadata lives under rag/index/
+        from pathlib import Path
+        _mp = Path(self.meta_path)
+        if not _mp.exists():
+            _alt = _mp.parent / 'index' / _mp.name
+            if _alt.exists():
+                self.meta_path = str(_alt)
 
         # --- Load metadata ---
         if not os.path.exists(self.meta_path):
