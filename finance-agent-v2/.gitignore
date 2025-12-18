@@ -34,3 +34,6 @@ rag/index/*
 !rag/index/finance_agent.index
 !rag/index/metadata.json
 !rag/index/finance_agent_meta.json
+
+# allow committing the prebuilt RAG index artifacts
+!rag/index/**
