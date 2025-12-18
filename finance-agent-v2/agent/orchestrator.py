@@ -245,3 +245,34 @@ if __name__ == "__main__":
         response = run_agent(q)
         print(f"\n🤖 Agent:\n{response}\n")
 
+# --- Backwards-compatible export for Render / app.py imports ---
+# app.py expects: from agent.orchestrator import FinanceAgent
+# If the implementation was renamed/refactored, provide a stable alias.
+import inspect as _inspect
+import sys as _sys
+
+_mod = _sys.modules[__name__]
+
+if not hasattr(_mod, "FinanceAgent"):
+    # Prefer common class names if they exist
+    for _name in ("FinanceAgent", "Orchestrator", "FinanceOrchestrator", "AgentOrchestrator"):
+        _obj = getattr(_mod, _name, None)
+        if _inspect.isclass(_obj):
+            setattr(_mod, "FinanceAgent", _obj)
+            break
+
+if not hasattr(_mod, "FinanceAgent"):
+    # Otherwise, pick a single obvious candidate class (last resort)
+    _candidates = [
+        (_n, _o) for _n, _o in vars(_mod).items()
+        if _inspect.isclass(_o) and _o.__module__ == __name__
+    ]
+    # If there's exactly one local class, alias it
+    if len(_candidates) == 1:
+        setattr(_mod, "FinanceAgent", _candidates[0][1])
+    else:
+        # Try "agent" in the class name
+        _agentish = [(_n, _o) for _n, _o in _candidates if "agent" in _n.lower()]
+        if len(_agentish) == 1:
+            setattr(_mod, "FinanceAgent", _agentish[0][1])
+
