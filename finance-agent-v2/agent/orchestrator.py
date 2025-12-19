@@ -276,3 +276,24 @@ if not hasattr(_mod, "FinanceAgent"):
         if len(_agentish) == 1:
             setattr(_mod, "FinanceAgent", _agentish[0][1])
 
+# --- Render/app.py compatibility ---
+# app.py imports: from agent.orchestrator import FinanceAgent
+# This repo currently uses top-level functions (no classes). Provide a stable wrapper.
+
+class FinanceAgent:
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def run(self, query: str, **kwargs):
+        fn = globals().get('parse_month_year')
+        if callable(fn):
+            try:
+                return fn(query, **kwargs)
+            except TypeError:
+                # function may not accept kwargs
+                return fn(query)
+        raise RuntimeError("No suitable orchestrator function found in agent/orchestrator.py")
+
+    def __call__(self, query: str, **kwargs):
+        return self.run(query, **kwargs)
+
