@@ -27,7 +27,7 @@ transactions_debug.json
 # Git internals
 .git/
 # ignore everything in the index by default
-rag/index/*
+# rag/index/*  # (disabled: need index committed for Render)
 
 # but commit required RAG index artifacts
 !rag/index/faiss.index
@@ -37,3 +37,13 @@ rag/index/*
 
 # allow committing the prebuilt RAG index artifacts
 !rag/index/**
+
+# Allow committing the FAISS RAG index for deployments
+!rag/index/
+!rag/index/*
+rag/index/*
+!rag/index/
+!rag/index/faiss.index
+!rag/index/metadata.json
+!rag/index/finance_agent.index
+!rag/index/finance_agent_meta.json
