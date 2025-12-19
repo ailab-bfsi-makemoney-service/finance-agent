@@ -1,66 +1,541 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Finance Agent</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
-  <div class="bg-white shadow-md rounded-lg w-full max-w-2xl p-6">
-    <h1 class="text-2xl font-semibold mb-4 text-center">💬 Personal Finance Agent</h1>
-    <div id="chat" class="h-96 overflow-y-auto border rounded-md p-4 bg-gray-50 mb-4"></div>
-    <div class="flex">
-      <input id="input" type="text" placeholder="Ask a question..."
-        class="flex-grow border rounded-l-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
-      <button onclick="sendMessage()"
-        class="bg-blue-500 hover:bg-blue-600 text-white px-4 rounded-r-md">Send</button>
-    </div>
-  </div>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Simple modern, neutral styling -->
+  <style>
+    :root {
+      --bg: #0f172a;
+      --bg-alt: #020617;
+      --card: #020617;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.15);
+      --text: #e5e7eb;
+      --text-soft: #9ca3af;
+      --border: #1f2937;
+      --error: #f97373;
+      --success: #4ade80;
+      --radius-lg: 18px;
+    }
 
-  <script>
-    async function sendMessage() {
-      const input = document.getElementById("input");
-      const chat = document.getElementById("chat");
-      const userMsg = input.value.trim();
-      if (!userMsg) return;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-      chat.innerHTML += `<div class='text-right text-blue-700 my-2'>You: ${userMsg}</div>`;
-      input.value = "";
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #1e293b, #020617);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      padding: 16px;
+    }
 
-      try {
-        const response = await fetch("/ask", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ question: userMsg })
-        });
+    .app-shell {
+      width: 100%;
+      max-width: 1120px;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.98));
+      border-radius: 24px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      box-shadow:
+        0 30px 80px rgba(15, 23, 42, 0.8),
+        0 0 0 1px rgba(148, 163, 184, 0.2);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
 
-        const data = await response.json();
+    header {
+      padding: 18px 22px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.18), transparent);
+    }
 
-        // handle both simple string and structured JSON
-        let reply = "";
-        if (typeof data.answer === "string") {
-          reply = data.answer;
-        } else if (data.summary) {
-          reply = `<strong>${data.summary}</strong>`;
-          if (data.recommendation)
-            reply += `<br><em>${data.recommendation}</em>`;
-          if (data.chart && data.chart.data) {
-            const list = data.chart.data.map(
-              d => `${d.label}: $${d.value.toFixed(2)}`
-            ).join("<br>");
-            reply += `<br><div class='text-sm text-gray-600 mt-2'>${list}</div>`;
-          }
-        } else {
-          reply = JSON.stringify(data);
-        }
+    .title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
 
-        chat.innerHTML += `<div class='text-left text-gray-800 my-2'>AI: ${reply}</div>`;
-        chat.scrollTop = chat.scrollHeight;
-      } catch (err) {
-        chat.innerHTML += `<div class='text-left text-red-600 my-2'>Error: ${err}</div>`;
+    header h1 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    header h1 span.badge {
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--accent-soft);
+      background: rgba(15, 23, 42, 0.8);
+      color: var(--accent);
+    }
+
+    header p {
+      color: var(--text-soft);
+      font-size: 0.8rem;
+    }
+
+    .status-pill {
+      font-size: 0.7rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(74, 222, 128, 0.4);
+      color: var(--success);
+      background: rgba(16, 185, 129, 0.08);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--success);
+      box-shadow: 0 0 8px rgba(74, 222, 128, 0.9);
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 16px;
+      padding: 16px;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    @media (max-width: 900px) {
+      main {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto auto;
       }
     }
-  </script>
+
+    .card {
+      background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.9), var(--bg-alt));
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      padding: 14px 14px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 0;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 2px;
+    }
+
+    .card-title {
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-soft);
+    }
+
+    .card-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-soft);
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 2px;
+    }
+
+    .pill {
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.8);
+      color: var(--text-soft);
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+    }
+
+    .pill:hover {
+      border-color: var(--accent);
+      background: rgba(15, 23, 42, 1);
+      transform: translateY(-1px);
+      color: var(--accent);
+    }
+
+    textarea {
+      width: 100%;
+      resize: vertical;
+      min-height: 80px;
+      max-height: 180px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.85);
+      color: var(--text);
+      padding: 10px 12px;
+      font-size: 0.9rem;
+      outline: none;
+      line-height: 1.4;
+    }
+
+    textarea::placeholder {
+      color: #6b7280;
+    }
+
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.3);
+    }
+
+    .input-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .hint {
+      font-size: 0.75rem;
+      color: var(--text-soft);
+    }
+
+    .btn {
+      border-radius: 999px;
+      padding: 8px 18px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: radial-gradient(circle at top left, #38bdf8, #0ea5e9);
+      color: #0b1120;
+      box-shadow:
+        0 10px 25px rgba(56, 189, 248, 0.5),
+        0 0 0 1px rgba(8, 47, 73, 0.8);
+      transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.08s ease;
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow:
+        0 14px 30px rgba(56, 189, 248, 0.7),
+        0 0 0 1px rgba(8, 47, 73, 1);
+      filter: brightness(1.02);
+    }
+
+    .btn span.icon {
+      font-size: 1rem;
+    }
+
+    .results-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 0;
+    }
+
+    .results-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 8px;
+      min-height: 0;
+    }
+
+    @media (max-width: 900px) {
+      .results-row {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .results-section {
+      background: rgba(15, 23, 42, 0.85);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .results-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .results-title {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-soft);
+    }
+
+    .results-minitext {
+      font-size: 0.75rem;
+      color: var(--text-soft);
+    }
+
+    .summary-body {
+      font-size: 0.9rem;
+      line-height: 1.4;
+      color: var(--text);
+    }
+
+    .summary-placeholder {
+      color: var(--text-soft);
+      font-size: 0.85rem;
+      font-style: italic;
+    }
+
+    .details-list {
+      font-size: 0.8rem;
+      color: var(--text-soft);
+      line-height: 1.4;
+      max-height: 150px;
+      overflow: auto;
+    }
+
+    .details-list ul {
+      padding-left: 1.1rem;
+    }
+
+    .label-tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      font-size: 0.7rem;
+    }
+
+    .tag {
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-soft);
+    }
+
+    .chart-container {
+      min-height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .chart-placeholder {
+      font-size: 0.8rem;
+      color: var(--text-soft);
+      font-style: italic;
+      text-align: center;
+    }
+
+    canvas {
+      max-width: 100%;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .status-bar {
+      font-size: 0.75rem;
+      color: var(--text-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding-top: 2px;
+    }
+
+    .status-message {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-message span.dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .status-message.error span.dot {
+      background: var(--error);
+    }
+
+    .status-message.success span.dot {
+      background: var(--success);
+    }
+
+    .status-message.loading span.dot {
+      background: var(--accent);
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.4); opacity: 1; }
+      100% { transform: scale(1); opacity: 0.6; }
+    }
+  </style>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header>
+      <div class="title-block">
+        <h1>
+          Finance Agent
+          <span class="badge">RAG + Intent Router</span>
+        </h1>
+        <p>Ask questions about your FY25 transactions, restaurants, categories, and more.</p>
+      </div>
+      <div class="status-pill">
+        <span class="status-dot"></span>
+        <span>Local Agent · Connected to Spring Boot API</span>
+      </div>
+    </header>
+
+    <main>
+      <!-- LEFT: Query input -->
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Ask a question</div>
+            <div class="card-subtitle">Grounded on your cc_transaction API + RAG layer</div>
+          </div>
+        </div>
+
+        <div class="pill-row" id="quickQuestions">
+          <button class="pill" data-question="How much did I spend overall in June 2025?">
+            June overall spend
+          </button>
+          <button class="pill" data-question="How much did I spend at restaurants in June 2025?">
+            June restaurant spend
+          </button>
+          <button class="pill" data-question="What are my top 5 restaurant merchants in FY25?">
+            Top restaurants FY25
+          </button>
+          <button class="pill" data-question="How much did I spend on Shopping in May 2025?">
+            Category: Shopping
+          </button>
+        </div>
+
+        <textarea
+          id="questionInput"
+          placeholder="e.g. “How much did I spend at restaurants in June 2025?”"
+        ></textarea>
+
+        <div class="input-footer">
+          <div class="hint">
+            Tip: Use natural language. The agent will detect intents like <b>restaurant_spend</b> or
+            <b>overall_spend</b> and call the right handlers.
+          </div>
+          <button id="askButton" class="btn">
+            <span class="icon">➤</span>
+            <span>Ask Agent</span>
+          </button>
+        </div>
+
+        <div class="status-bar">
+          <div id="statusMessage" class="status-message">
+            <span class="dot"></span>
+            <span>Idle · Ready for your next question</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: Results pane -->
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Results</div>
+            <div class="card-subtitle">Summary, details, and optional chart for this query.</div>
+          </div>
+        </div>
+
+        <div class="results-layout">
+          <!-- Summary -->
+          <div class="results-section">
+            <div class="results-section-header">
+              <div class="results-title">Summary</div>
+              <div id="intentTag" class="label-tag-row"></div>
+            </div>
+            <div id="summaryBody" class="summary-body summary-placeholder">
+              Ask something to see the agent’s answer here.
+            </div>
+          </div>
+
+          <!-- Details + Chart -->
+          <div class="results-row">
+            <!-- Details -->
+            <div class="results-section">
+              <div class="results-section-header">
+                <div class="results-title">Details</div>
+                <div id="metaTag" class="results-minitext"></div>
+              </div>
+              <div id="detailsBody" class="details-list summary-placeholder">
+                When available, extra context (like counts, merchants, categories) will show up here.
+              </div>
+            </div>
+
+            <!-- Chart -->
+            <div id="chartSection" class="results-section">
+              <div class="results-section-header">
+                <div class="results-title">Chart</div>
+                <div id="chartLabel" class="results-minitext">Visual breakdown</div>
+              </div>
+              <div class="chart-container">
+                <canvas id="resultChart"></canvas>
+                <div id="chartPlaceholder" class="chart-placeholder hidden">
+                  No chart available for this answer.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <script src="/static/app.js" defer></script>
 </body>
 </html>
-
