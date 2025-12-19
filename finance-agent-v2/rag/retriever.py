@@ -5,6 +5,20 @@ import faiss
 from sentence_transformers import SentenceTransformer
 from collections import defaultdict
 
+from pathlib import Path
+
+
+def _fallback_to_index(path_str: str) -> str:
+    """If <rag>/<file> doesn't exist, try <rag>/index/<file>."""
+    p = Path(path_str)
+    if p.exists():
+        return str(p)
+    alt = p.parent / 'index' / p.name
+    if alt.exists():
+        return str(alt)
+    return str(p)
+
+
 
 class RAGRetriever:
     """
